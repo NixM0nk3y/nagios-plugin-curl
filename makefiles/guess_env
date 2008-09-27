@@ -1,0 +1,106 @@
+#!/bin/sh
+
+UNAME_SYSTEM=`(uname -s) 2>/dev/null`
+UNAME_RELEASE=`(uname -r) 2>/dev/null`
+UNAME_VERSION=`(uname -v) 2>/dev/null`
+UNAME_MACHINE=`(uname -m) 2>/dev/null`
+
+# operating system and major, minor version, more should not be necessary
+case "$UNAME_SYSTEM.$UNAME_RELEASE" in
+	Linux*)		PLATFORM=LINUX
+			OS_MAJOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 1`
+			OS_MINOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 2`
+			LIBS_DL='-ldl'
+			;;
+
+	FreeBSD*)	PLATFORM=FREEBSD
+			OS_MAJOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 1`
+			OS_MINOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 2 | cut -d - -f 1`
+			LIBS_DL=
+			LIBS_SSP=
+			;;
+			
+	OpenBSD*)	PLATFORM=OPENBSD
+			OS_MAJOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 1`
+			OS_MINOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 2 | cut -d - -f 1`
+			LIBS_DL=
+			LIBS_SSP=
+			;;
+
+	SunOS*)		PLATFORM=SUNOS
+			OS_MAJOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 1`
+			OS_MINOR_VERSION=`echo $UNAME_RELEASE | cut -d . -f 2`
+			LIBS_DL='-ldl'
+			LIBS_SSP=
+			;;
+			
+	CYGWIN_NT*)	PLATFORM=CYGWIN
+			_tmp=`echo $UNAME_SYSTEM | cut -d - -f 2`
+			OS_MAJOR_VERSION=`echo $_tmp | cut -d . -f 1`
+			OS_MINOR_VERSION=`echo $_tmp | cut -d . -f 2`
+			LIBS_SSP=
+			;;
+	
+	*)
+			PLATFORM=UNKNOWN
+			echo "Unknown platform '$UNAME_SYSTEM#$UNAME_RELEASE'"
+			exit 1
+esac
+
+# the architecture
+case "$UNAME_MACHINE" in
+	i*86*)		ARCH=x86
+			;;
+	
+	sun4u)		ARCH=sun4u
+			;;
+			
+	*)		ARCH=UNKNOWN
+			echo "Unknown architecture '$UNAME_MACHINE'"
+			exit 1
+			
+esac
+
+# the compiler and version
+GCC_VERSION=`gcc -dumpversion`
+GCC_MAJOR_VERSION=`echo $GCC_VERSION | cut -d . -f 1`
+GCC_MINOR_VERSION=`echo $GCC_VERSION | cut -d . -f 2`
+
+case "$1" in
+	--platform)		echo $PLATFORM
+				;;
+	
+	--os-major-version)	echo $OS_MAJOR_VERSION
+				;;
+	
+	--os-minor-version)	echo $OS_MINOR_VERSION
+				;;
+	
+	--arch)			echo $ARCH
+				;;
+	
+	--libs-dl)		echo $LIBS_DL
+				;;
+	
+	--libs-ssl)		echo $LIBS_SSL
+				;;
+				
+	--gcc-major-version)	echo $GCC_MAJOR_VERSION
+				;;
+	
+	--gcc-minor-version)	echo $GCC_MINOR_VERSION
+				;;
+				
+	*)
+				cat <<EOF
+ARCH = $ARCH
+PLATFORM = $PLATFORM
+OS_MAJOR_VERSION = $OS_MAJOR_VERSION
+OS_MINOR_VERSION = $OS_MINOR_VERSION
+LIBS_DL = $LIBS_DL
+LIBS_SSL = $LIBS_SSL
+GCC_MAJOR_VERSION = $GCC_MAJOR_VERSION
+GCC_MINOR_VERSION = $GCC_MINOR_VERSION
+EOF
+				;;
+esac

@@ -1,0 +1,90 @@
+#    check_curl - Nagios Curl-based check plugin
+#    Copyright (C) 2008  Andreas Baumann
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+package	"check_url"
+version	"0.0.1"
+purpose
+"Nagios plugin using libcurl and libpcre for http checks
+Copyright (c)2008 Andreas Baumann <abaumann at yahoo to com>"
+
+usage	"[options] | --config-file <configuration file with options>"
+
+option	"config-file"	-	"The optional configuration file"
+	string
+	typestr="filename"
+	optional
+
+# common options, should remain the same among all plugins (along
+# with -V/--version, and -h/--help which are also standard in gengetopt)
+
+option	"verbose"	v	"Show details for command-line debugging (Nagios may truncate output)"
+	multiple
+	optional
+
+option	"timeout"	t	"Seconds before connection times out (default: 10)"
+	long
+	typestr="INTEGER"
+	optional
+
+option	"critical"	c	"Response time to result in critical status (seconds)"
+	long
+	typestr="INTEGER"
+	optional
+
+option	"warning"	w	"Response time to result in warning"
+	long
+	typestr="INTEGER"
+	optional
+
+option	"host"		H	"The host name in a HTTP 1.1 request (virtual host)"
+	string
+	typestr="host"
+	optional
+
+# plugin specific options
+
+option	"ip"		I	"The host/IP to check"
+	string
+	typestr="host/IP"
+	required
+
+option	"port"		p	"Port number (default: 80)"
+	short
+	typestr="INTEGER"
+	optional
+
+option	"url"		u	"URL to GET or POST (default: /)"
+	string
+	typestr="PATH"
+	optional
+
+option	"onredirect"	f	"How to handle redirected pages"
+	string
+	values="ok","warning","critical","follow"
+	optional
+
+option	"authorization"	a	"Username:password on sites with basic authentication"
+	string
+	typestr="Username:Password"
+	optional
+
+option 	"string"	s	"String to expect in the content"
+	string
+	typestr="STRING"
+	optional
+
+option	"ssl"		S	"Connect via SSL. Port defaults to 443"
+	optional
