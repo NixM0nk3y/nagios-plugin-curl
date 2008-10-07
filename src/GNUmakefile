@@ -14,6 +14,7 @@ BINS = \
 	check_curl
 
 OBJS = \
+	utils.o \
 	curlhelper.o \
 	cmdline.o
 

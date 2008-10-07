@@ -174,6 +174,7 @@ int main( int argc, char *argv[] ) {
 
 	/* Curl errors, result in critical Nagios state */
 	if( res != CURLE_OK ) {
+		remove_newlines( errbuf );
 		printf( "HTTP CRITICAL - %s (error: %d)\n", errbuf, res );
 		curlhelp_freebuffer( &body_buf );
 		curlhelp_freebuffer( &header_buf );
