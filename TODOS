@@ -1,5 +1,3 @@
-- protocol version and answer from server from HTTP status
-  line
 - try to mimic all options of check_http
 - implement full ranges in -c and -w (used by anybody?)
 - provide FTP functionality
@@ -8,6 +6,3 @@
   if the plugins is called with illegal arguments)
 - make use of bandwith measurement functions of libcurl
   for QoS checking options
-- drop-in replacement for strsep, where it is missing
-- handle error codes and set nagios plugin status
-  accordingly
