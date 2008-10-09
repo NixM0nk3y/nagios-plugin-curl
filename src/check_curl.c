@@ -28,6 +28,7 @@
 
 #include "common.h"
 #include "curlhelper.h"
+#include "utils.h"
 
 #define DEFAULT_TIMEOUT (double)10.0
 
@@ -119,6 +120,10 @@ int main( int argc, char *argv[] ) {
 	/* authentication */
 	if( args_info.authorization_given )
 		curl_easy_setopt( curl, CURLOPT_USERPWD, args_info.authorization_arg );
+
+	/* user agent */
+	if( args_info.useragent_given )
+		curl_easy_setopt( curl, CURLOPT_USERAGENT, args_info.useragent_arg );
 
 	/* compose URL */
 	snprintf( b, 2048, "http%s://%s%s",

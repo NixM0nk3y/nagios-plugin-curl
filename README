@@ -3,3 +3,10 @@ Replacement for check_http from the nagios-plugins package.
 Feel free to contact me at <abaumann at yahoo dot com> in case of questions,
 suggestions, patches, etc.
 
+Differences to check_http:
+- Additional option --config-file <configfile>, a gengetopt feature, allows
+  storing command line options in a configuration file
+
+Status of supported options:
+- -w and -c support only fixed values, no ranges
+

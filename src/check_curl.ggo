@@ -88,3 +88,8 @@ option 	"string"	s	"String to expect in the content"
 
 option	"ssl"		S	"Connect via SSL. Port defaults to 443"
 	optional
+
+option "useragent"	A	"String to be sent in http header as \"User Agent\""
+	string
+	typestr="STRING"
+	optional
