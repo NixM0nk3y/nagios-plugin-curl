@@ -16,11 +16,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define _XOPEN_SOURCE 600
-#include <string.h>
-#include <stdlib.h>
-#include <sys/types.h>
-
 #include "utils.h"
 
 void remove_newlines( char *s ) {

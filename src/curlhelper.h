@@ -19,6 +19,8 @@
 #ifndef __CURLHELPER_H
 #define __CURLHELPER_H
 
+#include <sys/types.h>		/* for size_t */
+
 /* callbacks for body, header, debug output */
 
 typedef struct {

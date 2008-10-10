@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h>		/* for printf */
+#include <stdlib.h>		/* for exit */
+#include <string.h>		/* for strstr */
 
 #include <curl/curl.h>
 #include <curl/types.h>
