@@ -3,6 +3,6 @@ TOPDIR = .
 SUBDIRS = src
 
 PACKAGE_NAME=nagios-plugin-curl
-PACKAGE_VERSION=0.0.1
+PACKAGE_VERSION=0.0.2
 
 -include $(TOPDIR)/makefiles/top.mk
