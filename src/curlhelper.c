@@ -26,7 +26,7 @@
 int curlhelp_initbuffer( curlhelp_curlbuf *buf ) {
 	buf->bufsize = 2048;
 	buf->buflen = 0;
-	buf->buf = (char *)malloc( 2048 ); 
+	buf->buf = (char *)malloc( (size_t)2048 ); 
 	if( buf->buf == NULL ) return -1;
 	return 0;
 }

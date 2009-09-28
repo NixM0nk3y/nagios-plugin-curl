@@ -81,7 +81,7 @@ int main( int argc, char *argv[] ) {
 	}
 
 	/* start up curl */
-	if( curl_global_init( CURL_GLOBAL_ALL ) != CURLE_OK ) {
+	if( curl_global_init( (long)CURL_GLOBAL_ALL ) != CURLE_OK ) {
 		printf( "HTTP CRITICAL - curl_global_init failed!\n" );
 		cmdline_parser_free( &args_info );
 		exit( STATE_UNKNOWN );
@@ -126,7 +126,7 @@ int main( int argc, char *argv[] ) {
 		curl_easy_setopt( curl, CURLOPT_USERAGENT, args_info.useragent_arg );
 
 	/* compose URL */
-	snprintf( b, 2048, "http%s://%s%s",
+	snprintf( b, (size_t)2048, "http%s://%s%s",
 		args_info.ssl_given ? "s" : "",
 		args_info.ip_arg,
 		args_info.url_given ? args_info.url_arg : "/" );
@@ -139,7 +139,7 @@ int main( int argc, char *argv[] ) {
 	/* compose HTTP headers */
 #if 0 /* FIXME: doesn't work with curl 7.15.2 (Centos 5.2)!! Check out why */
 	if( args_info.host_given ) {
-		snprintf( b, 2048, "Host: %s", args_info.host_arg );
+		snprintf( b, (size_t), "Host: %s", args_info.host_arg );
 		header_list = curl_slist_append( header_list, b );
 	}
 	curl_easy_setopt( curl, CURLOPT_HTTPHEADER, header_list );
@@ -192,12 +192,12 @@ int main( int argc, char *argv[] ) {
 	 * performance data to the answer always
 	 */
 	curl_easy_getinfo( curl, CURLINFO_TOTAL_TIME, &total_time );
-	snprintf( perfstring, 1024, "time=%.6gs;%.6g;%.6g;%.6g size=%dB;;;0",
+	snprintf( perfstring, (size_t)1024, "time=%.6gs;%.6g;%.6g;%.6g size=%dB;;;0",
 		total_time,
 		args_info.warning_given ? args_info.warning_arg : 0.0,
 		args_info.critical_given ? args_info.critical_arg : 0.0,
 		0.0,
-		body_buf.buflen );
+		(int)body_buf.buflen );
 
 	/* -s: check if the excepted string matches */
 	if( args_info.string_given ) {
