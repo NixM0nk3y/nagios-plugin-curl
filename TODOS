@@ -1,3 +1,8 @@
+- provide possibility to specify a CA cert bundle for
+  self-signed chains
+- add client-certificate for servers which check the
+  validity of our client certs
+- add flag for checkin/non-checking of SSL validity
 - try to mimic all options of check_http
 - implement full ranges in -c and -w (used by anybody?)
 - provide FTP functionality
