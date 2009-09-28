@@ -93,3 +93,26 @@ option "useragent"	A	"String to be sent in http header as \"User Agent\""
 	string
 	typestr="STRING"
 	optional
+
+option	"insecure"	-	"Allow connections to SSL sites without certs (SSL)"
+	optional
+
+option	"cacert"	-	"CA certificate to verify peer against (SSL)"
+	string
+	typestr="file"
+	optional
+
+option	"cert"		E	"Client certificate file and password (SSL)"
+	string
+	typestr="file"
+	optional
+
+option	"key"		-	"Private key file name (SSL)"
+	string
+	typestr="key"
+	optional
+
+option	"pass"		-	"Pass phrase for the private key (SSL)"
+	string
+	typestr="pass"
+	optional

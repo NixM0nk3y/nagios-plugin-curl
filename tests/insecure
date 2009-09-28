@@ -1,0 +1,9 @@
+f follow
+w 5
+c 10
+t 5
+S
+insecure
+I fozzie.eurospider.ch
+H intranet.eurospider.com
+u "/"

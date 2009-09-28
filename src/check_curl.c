@@ -38,6 +38,7 @@ int main( int argc, char *argv[] ) {
 	curlhelp_curlbuf header_buf;
 	CURL *curl;
 	char b[2048];
+	char b2[2048];
 	CURLcode res;
 	char errbuf[CURL_ERROR_SIZE+1];
 	struct curl_slist *header_list = NULL;
@@ -63,7 +64,7 @@ int main( int argc, char *argv[] ) {
 	if( args_info.config_file_given ) {
 		/* read command line options from file, allow override of configuration
 		 * options from the command line and check for required options
-		 */
+ 		 */
 		if( cmdline_parser_configfile( args_info.config_file_arg, &args_info, 1, 0, 1 ) != 0 ) {
 			printf( "HTTP CRITICAL - unable to read '%s'\n", args_info.config_file_arg );
 			fprintf( stderr, "\n%s\n", gengetopt_args_info_usage );
@@ -137,13 +138,11 @@ int main( int argc, char *argv[] ) {
 		curl_easy_setopt( curl, CURLOPT_PORT, args_info.port_arg );
 
 	/* compose HTTP headers */
-#if 0 /* FIXME: doesn't work with curl 7.15.2 (Centos 5.2)!! Check out why */
 	if( args_info.host_given ) {
-		snprintf( b, (size_t), "Host: %s", args_info.host_arg );
+		snprintf( b2, (size_t)2048, "Host: %s", args_info.host_arg );
 		header_list = curl_slist_append( header_list, b );
 	}
 	curl_easy_setopt( curl, CURLOPT_HTTPHEADER, header_list );
-#endif
 
 	/* set the error buffer */
 	curl_easy_setopt( curl, CURLOPT_ERRORBUFFER, errbuf );
@@ -159,6 +158,13 @@ int main( int argc, char *argv[] ) {
 
 		curl_easy_setopt( curl, CURLOPT_CONNECTTIMEOUT, timeout );
 		curl_easy_setopt( curl, CURLOPT_TIMEOUT, timeout );
+	}
+	
+	/* --insecure: choose level of CA chain validation (SSL) */
+	curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 2 );
+	if( args_info.insecure_given ) {
+		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 1 );
+		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, 0 );
 	}
 
 	/* do the request */
