@@ -1,6 +1,6 @@
 Summary: curl-based web monitoring plugin for Nagios
 Name: nagios-plugin-curl
-Version: 0.0.1
+Version: 0.0.3
 Release: 0.1
 License: GPL
 Group: Applications/System
@@ -45,5 +45,11 @@ rm -rf $RPM_BUILD_ROOT
 /%{_libdir}/nagios/plugins/check_curl
 
 %changelog
+* Mon Sep 28 2009 Andreas Baumann <abaumann@yahoo.com> 0.0.3-0.1
+- added client certificate and self-signed SSL chain handling
+
+* Wed Dec 17 2008 Andreas Baumann <abaumann@yahoo.com> 0.0.2-0.1
+- fixes for 64-bit, upgrade to 0.0.2
+
 * Thu Sep 25 2008 Andreas Baumann <abaumann@yahoo.com> 0.0.1-0.1
 - first preliminary packaged release

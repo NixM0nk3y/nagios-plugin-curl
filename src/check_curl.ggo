@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package	"check_url"
-version	"0.0.1"
+version	"0.0.3"
 purpose
 "Nagios plugin using libcurl and libpcre for http checks
 Copyright (c)2008 Andreas Baumann <abaumann at yahoo to com>"
@@ -97,6 +97,9 @@ option "useragent"	A	"String to be sent in http header as \"User Agent\""
 option	"insecure"	-	"Allow connections to SSL sites without certs (SSL)"
 	optional
 
+option	"verify-host"	-	"Verify that the host and the certificate host match (SSL)"
+	optional
+
 option	"cacert"	-	"CA certificate to verify peer against (SSL)"
 	string
 	typestr="file"
@@ -110,9 +113,4 @@ option	"cert"		E	"Client certificate file and password (SSL)"
 option	"key"		-	"Private key file name (SSL)"
 	string
 	typestr="key"
-	optional
-
-option	"pass"		-	"Pass phrase for the private key (SSL)"
-	string
-	typestr="pass"
 	optional

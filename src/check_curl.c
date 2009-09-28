@@ -160,13 +160,34 @@ int main( int argc, char *argv[] ) {
 		curl_easy_setopt( curl, CURLOPT_TIMEOUT, timeout );
 	}
 	
-	/* --insecure: choose level of CA chain validation (SSL) */
+	/* --cacert: CA certificate file to verify SSL connection against (SSL) */
 	curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 2 );
-	if( args_info.insecure_given ) {
-		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 1 );
-		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, 0 );
+	if( args_info.cacert_given ) {
+		curl_easy_setopt( curl, CURLOPT_CAINFO, args_info.cacert_arg );
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1 );
 	}
 
+	/* --insecure: choose level of CA chain validation (SSL) */
+	if( args_info.insecure_given ) {
+		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, 0 );
+
+		/* --verify-host: make it an additional option, not as in curl! (SSL) */
+		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 1 );
+		if( args_info.verify_host_given ) {
+			curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 2 );
+		}
+	}
+	
+	/* --cert: client certificate to present to server (SSL) */
+	if( args_info.cert_given ) {
+		curl_easy_setopt( curl, CURLOPT_SSLCERT, args_info.cert_arg );
+	}
+	
+	/* --key: key of the client certificate (SSL) */
+	if( args_info.key_given ) {
+		curl_easy_setopt( curl, CURLOPT_SSLKEY, args_info.key_arg );
+	}
+		
 	/* do the request */
 	res = curl_easy_perform( curl );	
 
