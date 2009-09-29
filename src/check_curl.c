@@ -161,21 +161,22 @@ int main( int argc, char *argv[] ) {
 	}
 	
 	/* --cacert: CA certificate file to verify SSL connection against (SSL) */
-	curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 2 );
 	if( args_info.cacert_given ) {
 		curl_easy_setopt( curl, CURLOPT_CAINFO, args_info.cacert_arg );
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1 );
+		/* per default if we have a CA verify both the peer and the
+		 * hostname in the certificate, can be switched off later */
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 2 );
+		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 2 );
 	}
 
-	/* --insecure: choose level of CA chain validation (SSL) */
-	if( args_info.insecure_given ) {
-		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, 0 );
+	/* --no-verify-peer: choose level of CA chain validation (SSL) */
+	if( args_info.no_verify_peer_given ) {
+		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYPEER, 1 );
+	}
 
-		/* --verify-host: make it an additional option, not as in curl! (SSL) */
+	/* --no-verify-host: make it an additional option, not as in curl! (SSL) */
+	if( args_info.no_verify_host_given ) {
 		curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 1 );
-		if( args_info.verify_host_given ) {
-			curl_easy_setopt( curl, CURLOPT_SSL_VERIFYHOST, 2 );
-		}
 	}
 	
 	/* --cert: client certificate to present to server (SSL) */

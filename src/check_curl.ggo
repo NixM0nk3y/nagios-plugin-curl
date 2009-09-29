@@ -94,10 +94,10 @@ option "useragent"	A	"String to be sent in http header as \"User Agent\""
 	typestr="STRING"
 	optional
 
-option	"insecure"	-	"Allow connections to SSL sites without certs (SSL)"
+option	"no-verify-peer"	-	"Allow connections to SSL sites without certs (SSL)"
 	optional
 
-option	"verify-host"	-	"Verify that the host and the certificate host match (SSL)"
+option	"no-verify-host"	-	"Don't verify that the host and the certificate host match (SSL)"
 	optional
 
 option	"cacert"	-	"CA certificate to verify peer against (SSL)"
