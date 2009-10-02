@@ -114,3 +114,10 @@ option	"key"		-	"Private key file name (SSL)"
 	string
 	typestr="key"
 	optional
+
+option	"protocol"	-	"The protocol to use (http, ftp)"
+	string
+	typestr="protocol"
+	values="http","ftp"
+	optional
+	default="http"

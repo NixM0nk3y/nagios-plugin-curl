@@ -48,6 +48,7 @@ int main( int argc, char *argv[] ) {
 	int exit_state = STATE_OK;
 	char perfstring[1024];
 	curlhelp_statusline status_line;
+	const char *protocol;
 
 	cmdline_parser_init( &args_info );
 
@@ -125,18 +126,36 @@ int main( int argc, char *argv[] ) {
 	/* user agent */
 	if( args_info.useragent_given )
 		curl_easy_setopt( curl, CURLOPT_USERAGENT, args_info.useragent_arg );
+		
+	/* --protocol: currently tested http and ftp */
+	if( !args_info.protocol_given )
+		protocol = "http";
+	else
+		protocol = args_info.protocol_arg;
 
 	/* compose URL */
-	snprintf( b, (size_t)2048, "http%s://%s%s",
+	snprintf( b, (size_t)2048, "%s%s://%s%s",
+		protocol,
 		args_info.ssl_given ? "s" : "",
 		args_info.ip_arg,
 		args_info.url_given ? args_info.url_arg : "/" );
 	curl_easy_setopt( curl, CURLOPT_URL, b );
-
+	
+	/* -S (SSL) */
+	if( args_info.ssl_given && strcmp( protocol, "ftp" ) == 0 ) {
+		curl_easy_setopt( curl, CURLOPT_FTP_SSL, 0 );
+		curl_easy_setopt( curl, CURLOPT_SSLVERSION, 0 );
+		curl_easy_setopt( curl, CURLOPT_FTPSSLAUTH, 0 );
+		curl_easy_setopt( curl, CURLOPT_FTP_SKIP_PASV_IP, 0 );
+		curl_easy_setopt( curl, CURLOPT_FTPPORT, NULL );
+		curl_easy_setopt( curl, CURLOPT_SSLVERSION, 0 );
+        }
+        
 	/* set port */
-	if( args_info.port_given )
+	if( args_info.port_given ) {
 		curl_easy_setopt( curl, CURLOPT_PORT, args_info.port_arg );
-
+	}
+	
 	/* compose HTTP headers */
 	if( args_info.host_given ) {
 		snprintf( b2, (size_t)2048, "Host: %s", args_info.host_arg );
@@ -209,10 +228,10 @@ int main( int argc, char *argv[] ) {
 	if( res != CURLE_OK ) {
 		remove_newlines( errbuf );
 		printf( "HTTP CRITICAL - %s (error: %d)\n", errbuf, res );
-		curlhelp_freebuffer( &body_buf );
-		curlhelp_freebuffer( &header_buf );
 		curl_easy_cleanup( curl );
 		curl_global_cleanup( );
+		curlhelp_freebuffer( &body_buf );
+		curlhelp_freebuffer( &header_buf );
 		exit( STATE_CRITICAL );
 	}
 
@@ -231,10 +250,10 @@ int main( int argc, char *argv[] ) {
 	if( args_info.string_given ) {
 		if( strstr( body_buf.buf, args_info.string_arg ) == NULL ) {
 			printf( "HTTP CRITICAL - string not found|%s\n", perfstring );
-			curlhelp_freebuffer( &body_buf );
-			curlhelp_freebuffer( &header_buf );
 			curl_easy_cleanup( curl );
 			curl_global_cleanup( );
+			curlhelp_freebuffer( &body_buf );
+			curlhelp_freebuffer( &header_buf );
 			exit( STATE_CRITICAL );
 		}
 	}
@@ -249,60 +268,63 @@ int main( int argc, char *argv[] ) {
 		exit_state = STATE_WARNING;
 	}
 
-	/* get status line of answer, check sanity of HTTP code */
-	if( curlhelp_parse_statusline( header_buf.buf, &status_line ) < 0 ) {
-		printf( "HTTP CRITICAL HTTP/1.x %ld unknown - Unparseable status line in %.3g seconds response time|%s\n",
-			 code, total_time, perfstring );
-		curlhelp_freebuffer( &body_buf );
-		curlhelp_freebuffer( &header_buf );
-		curl_easy_cleanup( curl );
-		curl_global_cleanup( );
-		exit( STATE_CRITICAL );
-	}
-	curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &code );
-	if( status_line.http_code != code ) {
-		printf( "HTTP CRITICAL HTTP/%d.%d %d %s - different HTTP codes (cUrl has %ld) in %.3g seconds response time|%s\n",
-			status_line.http_major, status_line.http_minor,
-			status_line.http_code, status_line.msg, code,
-			total_time, perfstring );
-		curlhelp_free_statusline( &status_line );
-		curlhelp_freebuffer( &body_buf );
-		curlhelp_freebuffer( &header_buf );
-		curl_easy_cleanup( curl );
-		curl_global_cleanup( );
-		exit( STATE_CRITICAL );
-	}
+	if( strcmp( protocol, "http" ) == 0 ) {
+		/* get status line of answer, check sanity of HTTP code */
+		if( curlhelp_parse_statusline( header_buf.buf, &status_line ) < 0 ) {
+			printf( "HTTP CRITICAL HTTP/1.x %ld unknown - Unparseable status line in %.3g seconds response time|%s\n",
+				 code, total_time, perfstring );
+			curl_easy_cleanup( curl );
+			curl_global_cleanup( );
+			curlhelp_freebuffer( &body_buf );
+			curlhelp_freebuffer( &header_buf );
+			exit( STATE_CRITICAL );
+		}
+		curl_easy_getinfo( curl, CURLINFO_RESPONSE_CODE, &code );
+		if( status_line.http_code != code ) {
+			printf( "HTTP CRITICAL HTTP/%d.%d %d %s - different HTTP codes (cUrl has %ld) in %.3g seconds response time|%s\n",
+				status_line.http_major, status_line.http_minor,
+				status_line.http_code, status_line.msg, code,
+				total_time, perfstring );
+			curl_easy_cleanup( curl );
+			curl_global_cleanup( );
+			curlhelp_free_statusline( &status_line );
+			curlhelp_freebuffer( &body_buf );
+			curlhelp_freebuffer( &header_buf );
+			exit( STATE_CRITICAL );
+		}
 
-	/* check status codes, set exit status accordingly */
-	if( code >= 600 || code <= 100 ) {
-		printf( "HTTP CRITICAL HTTP/%d.%d %d %s - Illegal status code (status line: %.40s)\n",
-			status_line.http_major, status_line.http_minor,
+		/* check status codes, set exit status accordingly */
+		if( code >= 600 || code <= 100 ) {
+			printf( "HTTP CRITICAL HTTP/%d.%d %d %s - Illegal status code (status line: %.40s)\n",
+				status_line.http_major, status_line.http_minor,
+				status_line.http_code, status_line.msg,
+				status_line.first_line );
+			curl_easy_cleanup( curl );
+			curl_global_cleanup( );
+			curlhelp_free_statusline( &status_line );
+			curlhelp_freebuffer( &body_buf );
+			curlhelp_freebuffer( &header_buf );
+			exit( STATE_CRITICAL );
+		}
+		if( code >= 500 ) {
+			level_str = "CRITICAL";
+			exit_state = STATE_CRITICAL;
+		} else if( code >= 400 ) {
+			level_str = "WARNING";
+			exit_state = STATE_WARNING;
+		}
+
+		printf( "HTTP %s HTTP/%d.%d %d %s - %.3g seconds response time|%s\n",
+			level_str, status_line.http_major, status_line.http_minor,
 			status_line.http_code, status_line.msg,
-			status_line.first_line );
+			total_time, perfstring );
+		
 		curlhelp_free_statusline( &status_line );
-		curlhelp_freebuffer( &body_buf );
-		curlhelp_freebuffer( &header_buf );
-		curl_easy_cleanup( curl );
-		curl_global_cleanup( );
-		exit( STATE_CRITICAL );
 	}
-	if( code >= 500 ) {
-		level_str = "CRITICAL";
-		exit_state = STATE_CRITICAL;
-	} else if( code >= 400 ) {
-		level_str = "WARNING";
-		exit_state = STATE_WARNING;
-	}
-
-	printf( "HTTP %s HTTP/%d.%d %d %s - %.3g seconds response time|%s\n",
-		level_str, status_line.http_major, status_line.http_minor,
-		status_line.http_code, status_line.msg,
-		total_time, perfstring );
-
-	curlhelp_free_statusline( &status_line );
-	curlhelp_freebuffer( &body_buf );
-	curlhelp_freebuffer( &header_buf );
+	
 	curl_easy_cleanup( curl );
 	curl_global_cleanup( );
+	curlhelp_freebuffer( &body_buf );
+	curlhelp_freebuffer( &header_buf );
 	exit( exit_state );
 }
