@@ -35,7 +35,7 @@ int curlhelp_buffer_callback( void *buffer, size_t size, size_t nmemb, void *str
 	curlhelp_curlbuf *buf = (curlhelp_curlbuf *)stream;
 
 	while( buf->bufsize < buf->buflen + size * nmemb + 1 ) {
-		buf->bufsize *= buf->bufsize * 1.3;
+		buf->bufsize *= buf->bufsize * 2;
 		buf->buf = (char *)realloc( buf->buf, buf->bufsize );
 		if( buf->buf == NULL ) {
 			return -1;
@@ -46,7 +46,7 @@ int curlhelp_buffer_callback( void *buffer, size_t size, size_t nmemb, void *str
 	buf->buflen += size * nmemb;
 	buf->buf[buf->buflen] = '\0';
 
-	return size * nmemb;
+	return (int)( size * nmemb );
 }
 
 void curlhelp_freebuffer( curlhelp_curlbuf *buf ) {
@@ -63,7 +63,7 @@ int curlhelp_parse_statusline( char *buf, curlhelp_statusline *status_line ) {
 	first_line_end = strstr( buf, "\r\n" );
 	if( first_line_end == NULL ) return -1;
 
-	first_line_len = first_line_end - buf;
+	first_line_len = (size_t)( first_line_end - buf );
 	status_line->first_line = (char *)malloc( first_line_len + 1 );
 	if( status_line->first_line == NULL ) return -1;
 	memcpy( status_line->first_line, buf, first_line_len );
