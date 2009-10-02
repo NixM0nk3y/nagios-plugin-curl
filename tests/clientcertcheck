@@ -1,8 +1,0 @@
-f follow
-w 5
-c 10
-t 5
-S
-I charon.eurospider.ch
-H charon.eurospider.ch
-u "/"
