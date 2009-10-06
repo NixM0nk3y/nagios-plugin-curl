@@ -49,6 +49,8 @@ int main( int argc, char *argv[] ) {
 	char perfstring[1024];
 	curlhelp_statusline status_line;
 	const char *protocol;
+	const char *answer_protocol;
+	const char *answer_protocol_version;
 
 	cmdline_parser_init( &args_info );
 
@@ -223,11 +225,20 @@ int main( int argc, char *argv[] ) {
 
 	/* free header list, we don't need it anymore */
 	curl_slist_free_all( header_list );
+	
+	/* set answer protocol */
+	if( strcmp( protocol, "http" ) == 0 ) {
+		answer_protocol = "HTTP";
+		answer_protocol_version = "";
+	} else if( strcmp( protocol, "ftp" ) == 0 ) {
+		answer_protocol = "FTP";
+		answer_protocol_version = "";
+	}
 
 	/* Curl errors, result in critical Nagios state */
 	if( res != CURLE_OK ) {
 		remove_newlines( errbuf );
-		printf( "HTTP CRITICAL - %s (error: %d)\n", errbuf, res );
+		printf( "%s CRITICAL - %s (error: %d)\n", answer_protocol, errbuf, res );
 		curl_easy_cleanup( curl );
 		curl_global_cleanup( );
 		curlhelp_freebuffer( &body_buf );
