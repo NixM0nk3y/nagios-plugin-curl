@@ -15,7 +15,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package	"check_url"
-version	"0.0.3"
+version	"0.0.4"
 purpose
 "Nagios plugin using libcurl and libpcre for http checks
 Copyright (c)2008 Andreas Baumann <abaumann at yahoo to com>"
