@@ -1,13 +1,16 @@
+# Nagios Plugin Curl RPM spec file
+#
+# Copyright (C) 2012
+
 Summary: curl-based web monitoring plugin for Nagios
 Name: nagios-plugin-curl
 Version: 0.0.4
 Release: 0.1
-License: GPL
+License: GPLv3
 Group: Applications/System
-Source: %{name}_%{version}.tar
+Source: %{name}_%{version}.tar.gz
 
-#TODO: publish
-#URL: 
+URL: https://github.com/andreasbaumann/nagios-plugin-curl
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -27,9 +30,8 @@ as 'check_http', but based on the cURL web library.
 %prep
 %setup
 
-
 %build
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
