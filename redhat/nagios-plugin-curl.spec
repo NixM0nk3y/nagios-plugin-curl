@@ -4,7 +4,7 @@ Version: 0.0.4
 Release: 0.1
 License: GPL
 Group: Applications/System
-Source: %{name}-%{version}.tar
+Source: %{name}_%{version}.tar
 
 #TODO: publish
 #URL: 
