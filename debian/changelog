@@ -1,0 +1,5 @@
+nagios-plugin-curl (0.0.4-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Andreas Baumann <abaumann@yahoo.com>  Thu, 12 Jul 2012 17:48:00 +0200

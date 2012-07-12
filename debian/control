@@ -1,0 +1,15 @@
+Source: nagios-plugin-curl
+Section: unknown
+Priority: extra
+Maintainer: Andreas Baumann <abaumann@yahoo.com>
+Build-Depends: debhelper (>= 4.1.16), pkg-config,
+ libcurl-dev
+Standards-Version: 3.8.3
+Homepage: https://github.com/andreasbaumann/nagios-plugin-curl
+
+Package: nagios-plugin-curl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: nagios-plugin-curl
+ Nagios plugin with similar command line options and functionality
+ as 'check_http', but based on the cURL web library.
