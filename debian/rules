@@ -59,9 +59,9 @@ install: build
 	# Add here commands to install the package
 	# The DESTDIR Has To Be Exactly  /usr/src/packages/BUILD/debian/<nameOfPackage>
 
-	# main package
-	$(MAKE) install $(PGFUSE_PARAMS) \
-		DESTDIR=/usr/src/packages/BUILD/debian/wolframe
+	# install
+	mkdir -p /usr/src/packages/BUILD/debian/usr/lib/$(DEB_HOST_MULTIARCH)/nagios/plugins/
+	install -D -m0755 src/check_curl /usr/src/packages/BUILD/debian/usr/lib/$(DEB_HOST_MULTIARCH)/nagios/plugins/
 
 	# --- end custom part for installing
 

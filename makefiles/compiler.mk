@@ -140,7 +140,7 @@ CCPP_LINK = $(CCPP)
 	$(CCPP) -c -o $@ $(CCPPFLAGS) $<
 
 %$(EXE): %.o $(OBJS)
-	$(CCPP_LINK) -o $@ $(LIBS) $(OBJS) $<
+	$(LINK) -o $@ $(LIBS) $(OBJS) $<
 
 %.sho : %.c
 	$(CC) -c -o $@ -fPIC -DSHARED $(CFLAGS) $<
