@@ -2,6 +2,69 @@
 #
 # Copyright (C) 2012
 
+%define rhel 0
+%define rhel5 0
+%define rhel6 0
+%if 0%{?rhel_version} >= 500 && 0%{?rhel_version} <= 599
+%define dist rhel5
+%define rhel 1
+%define rhel5 1
+%endif
+%if 0%{?rhel_version} >= 600 && 0%{?rhel_version} <= 699
+%define dist rhel6
+%define rhel 1
+%define rhel6 1
+%endif
+
+%define centos 0
+%if 0%{?centos_version} >= 500 && 0%{?centos_version} <= 599
+%define dist centos5
+%define centos 1
+%define rhel5 1
+%endif
+
+%if 0%{?centos_version} >= 600 && 0%{?centos_version} <= 699
+%define dist centos6
+%define centos 1
+%define rhel6 1
+%endif
+
+%define fedora 0
+%define fc14 0
+%if 0%{?fedora_version} == 14
+%define dist fc14
+%define fc14 1
+%define fedora 1
+%endif
+%define fc15 0  
+%if 0%{?fedora_version} == 15
+%define dist fc15
+%define fc15 1
+%define fedora 1
+%endif
+%define fc16 0  
+%if 0%{?fedora_version} == 16
+%define dist fc16
+%define fc16 1   
+%define fedora 1
+%endif
+
+%define suse 0
+%if 0%{?suse_version} == 1140
+%define dist osu114
+%define suse 1
+%endif
+%if 0%{?suse_version} > 1140
+%define dist osu121
+%define suse 1
+%endif
+
+%define sles 0
+%if 0%{?sles_version} == 11
+%define dist sle11
+%define sles 1
+%endif
+
 Summary: curl-based web monitoring plugin for Nagios
 Name: nagios-plugin-curl
 Version: 0.0.4
@@ -14,10 +77,31 @@ URL: https://github.com/andreasbaumann/nagios-plugin-curl
 
 BuildRoot: %{_tmppath}/%{name}-root
 
+# Build dependencies
+###
+
+%if %{rhel} || %{centos} || %{fedora}
+BuildRequires: pkgconfig
+%endif
+%if %{suse} || %{sles}
+BuildRequires: pkg-config
+%endif
+
+%if %{rhel} || %{centos} || %{fedora}
 BuildRequires: curl-devel
 Requires: curl
+%endif
 
-Distribution: rhel5
+%if %{suse} || %{sles}
+BuildRequires: libcurl-devel
+Requires: libcurl
+%endif
+
+# Check if 'Distribution' is really set by OBS (as mentioned in bacula)
+%if ! 0%{?opensuse_bs}
+Distribution: %{dist}
+%endif
+
 Packager: Andreas Baumann <abaumann@yahoo.com>
 
 
