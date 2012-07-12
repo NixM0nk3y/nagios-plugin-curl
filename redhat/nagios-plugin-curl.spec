@@ -14,8 +14,6 @@ URL: https://github.com/andreasbaumann/nagios-plugin-curl
 
 BuildRoot: %{_tmppath}/%{name}-root
 
-# usually too old versions packaged in the distributions!!
-#BuildRequires: gengetopt
 BuildRequires: curl-devel
 Requires: curl
 

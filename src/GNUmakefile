@@ -34,6 +34,5 @@ local_all: cmdline.h
 local_clean:
 
 local_distclean:
-	-@rm cmdline.c cmdline.h
 	
 local_test:
