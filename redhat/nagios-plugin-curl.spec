@@ -125,6 +125,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%dir /%{_libdir}/nagios/
 %dir /%{_libdir}/nagios/plugins/
 /%{_libdir}/nagios/plugins/check_curl
 
