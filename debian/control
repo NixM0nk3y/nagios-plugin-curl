@@ -3,7 +3,7 @@ Section: unknown
 Priority: extra
 Maintainer: Andreas Baumann <abaumann@yahoo.com>
 Build-Depends: debhelper (>= 4.1.16), pkg-config,
- libcurl-dev
+ libcurl4-openssl-dev
 Standards-Version: 3.8.3
 Homepage: https://github.com/andreasbaumann/nagios-plugin-curl
 

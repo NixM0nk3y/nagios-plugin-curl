@@ -5,9 +5,9 @@
 # - PACKAGE_VERSION
 #
 # provides:
-# - target 'dist'
+# - targets 'dist', 'dist-gz'
 
-.PHONY: dist
+.PHONY: dist dist-gz
 dist: distclean
 	test -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar || rm -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
 	test -d /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION) || rm -rf /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
@@ -19,3 +19,7 @@ dist: distclean
 		tar cvf /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	rm -rf /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
 	mv -f /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar .
+
+dist-gz: dist
+	rm -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
+	gzip $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
