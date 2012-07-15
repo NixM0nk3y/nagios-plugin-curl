@@ -1,25 +1,43 @@
-# creates distribution tarball
+# creates a source tarball ready for distribution
 #
 # requires:
 # - PACKAGE_NAME
 # - PACKAGE_VERSION
 #
 # provides:
-# - targets 'dist', 'dist-gz'
+# - target: dist
+# - target: dist-bz2, dist-gz, dist-Z
 
-.PHONY: dist dist-gz
-dist: distclean
-	test -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar || rm -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
-	test -d /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION) || rm -rf /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
-	find . -type f | grep -v .svn | \
-		xargs tar cf /tmp/pre
-	mkdir /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
-	cd /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION) && \
-		tar xf ../pre && rm -f ../pre && cd .. && \
-		tar cvf /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar $(PACKAGE_NAME)-$(PACKAGE_VERSION)
-	rm -rf /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
-	mv -f /tmp/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar .
+.PHONY: dist dist-bz2 dist-gz dist-Z
+
+TMPDIR ?= /tmp
+
+dist:
+	-@rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	-@rm -rf $(TMPDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	mkdir $(TMPDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	cp -r * $(TMPDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)/.
+	-@cd $(TMPDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION) ; \
+		$(MAKE) distclean ; \
+		rm -f makefiles/gmake/platform.mk.vars; \
+		rm -f makefiles/gmake/platform.vars; \
+		find . -name .svn -exec rm -rf {} \; ; \
+		find . -name .git -exec rm -rf {} \; ; \
+		cd .. ; \
+		tar cvf $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar \
+			$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	-@rm -rf $(TMPDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)
+	@mv $(TMPDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar .
+
+dist-bz2: dist
+	-@rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION).bz2
+	@bzip2 -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
 
 dist-gz: dist
-	rm -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
-	gzip $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
+	-@rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION).gz
+	@gzip $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
+
+dist-Z: dist
+	-@rm -rf $(PACKAGE_NAME)-$(PACKAGE_VERSION).Z
+	@compress -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar
+
