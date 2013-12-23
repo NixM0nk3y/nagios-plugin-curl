@@ -124,6 +124,10 @@ int main( int argc, char *argv[] ) {
 	if( args_info.authorization_given )
 		curl_easy_setopt( curl, CURLOPT_USERPWD, args_info.authorization_arg );
 
+        /* -d: digest */
+        if( args_info.digest_given )
+                curl_easy_setopt( curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_DIGEST );
+
 	/* user agent */
 	if( args_info.useragent_given )
 		curl_easy_setopt( curl, CURLOPT_USERAGENT, args_info.useragent_arg );

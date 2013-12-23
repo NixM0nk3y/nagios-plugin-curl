@@ -93,6 +93,7 @@ struct gengetopt_args_info
   char * protocol_arg;	/**< @brief The protocol to use (http, ftp) (default='http').  */
   char * protocol_orig;	/**< @brief The protocol to use (http, ftp) original value given at command line.  */
   const char *protocol_help; /**< @brief The protocol to use (http, ftp) help description.  */
+  const char *digest_help; /**< @brief The protocol to use (http, ftp) help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
@@ -116,6 +117,7 @@ struct gengetopt_args_info
   unsigned int cert_given ;	/**< @brief Whether cert was given.  */
   unsigned int key_given ;	/**< @brief Whether key was given.  */
   unsigned int protocol_given ;	/**< @brief Whether protocol was given.  */
+  unsigned int digest_given ;	/**< @brief Whether to use digest auth.  */
 
   char **inputs ; /**< @brief unamed options (options without names) */
   unsigned inputs_num ; /**< @brief unamed options number */

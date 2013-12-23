@@ -55,6 +55,7 @@ const char *gengetopt_args_info_help[] = {
   "  -E, --cert=file               Client certificate file and password (SSL)",
   "      --key=key                 Private key file name (SSL)",
   "      --protocol=protocol       The protocol to use (http, ftp)  (possible\n                                  values=\"http\", \"ftp\" default=`http')",
+  "  -d, --digest                  Use digest auth on http authentication",
     0
 };
 
@@ -131,6 +132,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->cert_given = 0 ;
   args_info->key_given = 0 ;
   args_info->protocol_given = 0 ;
+  args_info->digest_given = 0 ;
 }
 
 static
@@ -165,7 +167,6 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->key_orig = NULL;
   args_info->protocol_arg = gengetopt_strdup ("http");
   args_info->protocol_orig = NULL;
-  
 }
 
 static
@@ -197,6 +198,7 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->cert_help = gengetopt_args_info_help[19] ;
   args_info->key_help = gengetopt_args_info_help[20] ;
   args_info->protocol_help = gengetopt_args_info_help[21] ;
+  args_info->digest_help = gengetopt_args_info_help[22] ;
   
 }
 
@@ -438,6 +440,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "key", args_info->key_orig, 0);
   if (args_info->protocol_given)
     write_into_file(outfile, "protocol", args_info->protocol_orig, cmdline_parser_protocol_values);
+  if (args_info->digest_given)
+    write_into_file(outfile, "digest", 0, 0 );
   
 
   i = EXIT_SUCCESS;
@@ -1408,6 +1412,7 @@ cmdline_parser_internal (
         { "cert",	1, NULL, 'E' },
         { "key",	1, NULL, 0 },
         { "protocol",	1, NULL, 0 },
+        { "digest",        0, NULL, 'd' },
         { 0,  0, 0, 0 }
       };
 
@@ -1416,7 +1421,7 @@ cmdline_parser_internal (
       custom_opterr = opterr;
       custom_optopt = optopt;
 
-      c = custom_getopt_long (argc, argv, "hVvt:c:w:H:I:p:u:f:a:s:SA:E:", long_options, &option_index);
+      c = custom_getopt_long (argc, argv, "hVvt:c:w:H:I:p:u:f:a:s:SA:E:d", long_options, &option_index);
 
       optarg = custom_optarg;
       optind = custom_optind;
@@ -1573,6 +1578,18 @@ cmdline_parser_internal (
               additional_error))
             goto failure;
         
+          break;
+        case 'd':       /* Connect via SSL. Port defaults to 443.  */
+
+
+          if (update_arg( 0 ,
+               0 , &(args_info->digest_given),
+              &(local_args_info.digest_given), optarg, 0, 0, ARG_NO,
+              check_ambiguity, override, 0, 0,
+              "digest", 'd',
+              additional_error))
+            goto failure;
+
           break;
         case 'A':	/* String to be sent in http header as \"User Agent\".  */
         
